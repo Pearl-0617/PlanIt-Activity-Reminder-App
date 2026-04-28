@@ -39,4 +39,22 @@ return;
 }
 }
 System.out.println("Reminder not found.");
+return;
+}
+}
+System.out.println("Reminder not found.");
+}
+
+public int getUserId() {
+return userId;
+}
+
+public String getUserName() {
+return userName;
+}
+
+public String getEmail() {
+return email;
+}
+}
 

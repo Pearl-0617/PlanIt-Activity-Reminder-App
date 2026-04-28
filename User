@@ -15,3 +15,28 @@ this.userName = userName;
 this.email = email;
 this.reminders = new ArrayList<>();
 }
+
+public void setReminder(ActivityReminder reminder){
+reminders.add(reminder);
+System.out.println(Reminder added: " + reminder.getTitle());
+}
+
+public List<ActivityReminder> viewUpcoming() {
+return reminders;
+}
+
+public void receiveNotif(String message){
+System.out.println("Notification: " + message);
+}
+
+public void editReminder(int reminderId, String newTitle, String newDescription) {
+for (Activityreminder r : reminders){
+if(r.getReminderId() == reminderId){
+r.setTitle(newTitle);
+r.setDescription(newDescription);
+System.out.println("Reminder updated.");
+return;
+}
+}
+System.out.println("Reminder not found.");
+

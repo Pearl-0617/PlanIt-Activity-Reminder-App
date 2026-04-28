@@ -1,1 +1,17 @@
+import java.util.ArrayList;
+import java.util.List;
 
+public class User{
+
+private int userId;
+private String userName;
+private String email;
+
+private List<ActivityReminder> reminders;
+
+public User(int userId, String userName, String email) {
+this.userId = userId;
+this.userName = userName;
+this.email = email;
+this.reminders = new ArrayList<>();
+}

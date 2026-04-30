@@ -1,1 +1,37 @@
+import java.awt.*;
+import java.awt.TrayIcon.MessageType;
 
+class NotificationSystem {
+
+    public void sendNotif(ActivityReminder reminder) {
+
+        if (!SystemTray.isSupported()) {
+            System.out.println("System tray not supported. Using console fallback:");
+            System.out.println(" " + reminder.getTitle() + " - " + reminder.getDescription());
+            return;
+        }
+
+        try {
+            SystemTray tray = SystemTray.getSystemTray();
+
+            Image image = Toolkit.getDefaultToolkit().createImage("notification.png");
+
+            TrayIcon trayIcon = new TrayIcon(image, "PlanIt");
+            trayIcon.setImageAutoSize(true);
+            trayIcon.setToolTip("PlanIt Reminder System");
+
+            tray.add(trayIcon);
+
+            trayIcon.displayMessage(
+                    reminder.getTitle(),
+                    reminder.getDescription() +
+                            "\nDate: " + reminder.getDate() +
+                            " Time: " + reminder.getTime(),
+                    MessageType.INFO
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

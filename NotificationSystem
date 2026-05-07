@@ -4,7 +4,25 @@ import java.awt.TrayIcon.MessageType;
 class NotificationSystem {
 
     public void sendNotif(ActivityReminder reminder) {
-
+        if (reminder == null) {
+            throw new IllegalArgumentException("Reminder cannot be null");
+        }
+        
+        if (reminder.getTitle() == null || reminder.getTitle().isEmpty()) {
+            throw new IllegalArgumentException("Title cannot be empty");
+        }
+        
+        if (reminder.getDescription() == null || reminder.getDescription().isEmpty()) {
+            throw new IllegalArgumentException("Description cannot be empty");
+        }
+        
+        if (reminder.getDate() == null || reminder.getDate().isEmpty()) {
+            throw new IllegalArgumentException("Date cannot be empty");
+        }
+        
+        if (reminder.getTime() == null || reminder.getTime().isEmpty()) {
+            throw new IllegalArgumentException("Time cannot be empty");
+        }
         if (!SystemTray.isSupported()) {
             System.out.println("System tray not supported. Using console fallback:");
             System.out.println(" " + reminder.getTitle() + " - " + reminder.getDescription());

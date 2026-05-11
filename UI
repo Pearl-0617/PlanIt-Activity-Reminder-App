@@ -1,1 +1,162 @@
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
 
+public class UI {
+
+    private JFrame frame;
+    private DefaultListModel<String> listModel;
+    private JList<String> reminderList;
+
+    private User user;
+
+    public UI(User user) {
+        this.user = user;
+    }
+
+    public void displayDashboard() {
+
+        frame = new JFrame("PlanIt Dashboard");
+        frame.setSize(500, 500);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        listModel = new DefaultListModel<>();
+        reminderList = new JList<>(listModel);
+
+        refreshList();
+
+        JButton addBtn = new JButton("Add Reminder");
+        JButton editBtn = new JButton("Edit Reminder");
+        JButton notifyBtn = new JButton("Notify");
+
+        addBtn.addActionListener(e -> showReminderEditor(null));
+
+        editBtn.addActionListener(e -> {
+
+            int index = reminderList.getSelectedIndex();
+
+            if (index == -1) {
+                JOptionPane.showMessageDialog(frame, "Select a reminder first!");
+                return;
+            }
+
+            ActivityReminder reminder = user.viewUpcoming().get(index);
+
+            showReminderEditor(reminder);
+        });
+
+        notifyBtn.addActionListener(e -> {
+
+            int index = reminderList.getSelectedIndex();
+
+            if (index == -1) {
+                JOptionPane.showMessageDialog(frame, "Select a reminder first!");
+                return;
+            }
+
+            ActivityReminder reminder = user.viewUpcoming().get(index);
+
+            NotificationSystem notif = new NotificationSystem();
+            notif.sendNotif(reminder);
+        });
+
+        JPanel buttonPanel = new JPanel();
+
+        buttonPanel.add(addBtn);
+        buttonPanel.add(editBtn);
+        buttonPanel.add(notifyBtn);
+
+        frame.add(new JScrollPane(reminderList), BorderLayout.CENTER);
+        frame.add(buttonPanel, BorderLayout.SOUTH);
+
+        frame.setVisible(true);
+    }
+
+    public void showReminderEditor(ActivityReminder reminder) {
+
+        JTextField titleField = new JTextField();
+        JTextField descField = new JTextField();
+        JTextField dateField = new JTextField();
+        JTextField timeField = new JTextField();
+
+        if (reminder != null) {
+
+            titleField.setText(reminder.getTitle());
+            descField.setText(reminder.getDescription());
+            dateField.setText(reminder.getDate());
+            timeField.setText(reminder.getTime());
+        }
+
+        Object[] fields = {
+
+                "Title:", titleField,
+                "Description:", descField,
+                "Date:", dateField,
+                "Time:", timeField
+        };
+
+        int result = JOptionPane.showConfirmDialog(
+
+                frame,
+                fields,
+                reminder == null ? "Add Reminder" : "Edit Reminder",
+                JOptionPane.OK_CANCEL_OPTION);
+
+        if (result == JOptionPane.OK_OPTION) {
+
+            if (reminder == null) {
+
+                ActivityReminder newReminder = new ActivityReminder(
+
+                        user.viewUpcoming().size() + 1,
+                        titleField.getText(),
+                        descField.getText(),
+                        dateField.getText(),
+                        timeField.getText());
+
+                user.setReminder(newReminder);
+
+            } else {
+
+                reminder.editDetails(
+
+                        titleField.getText(),
+                        descField.getText(),
+                        dateField.getText(),
+                        timeField.getText());
+            }
+
+            refreshList();
+        }
+    }
+
+    private void refreshList() {
+
+        listModel.clear();
+
+        List<ActivityReminder> reminders = user.viewUpcoming();
+
+        for (ActivityReminder r : reminders) {
+
+            listModel.addElement(
+
+                    "ID: " + r.getReminderId() +
+                            " | " + r.getTitle() +
+                            " | " + r.getDate() +
+                            " | " + r.getTime());
+        }
+    }
+
+    public static void main(String[] args) {
+
+        User user = new User(
+
+                1,
+                "Sample User",
+                "sample@email.com");
+
+        UI ui = new UI(user);
+
+        ui.displayDashboard();
+    }
+}

@@ -1,7 +1,35 @@
 import java.awt.*;
 import java.awt.TrayIcon.MessageType;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.Duration;
+import java.util.Timer;
+import java.util.TimerTask;
 
 class NotificationSystem {
+
+    public void scheduleNotif(ActivityReminder reminder) {
+        validateReminder(reminder);
+
+        LocalDateTime reminderTime = LocalDateTime.parse(
+            reminder.getDate() + "T" + reminder.getTime(),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+        );
+
+        long delay = Duration.between(LocalDateTime.now(), reminderTime).toMillis();
+
+        if (delay < 0) {
+            throw new IllegalArgumentException("Reminder time is in the past!");
+        }
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                sendNotif(reminder);
+            }
+        }, delay);
+    }
 
     public void sendNotif(ActivityReminder reminder) {
         validateReminder(reminder);

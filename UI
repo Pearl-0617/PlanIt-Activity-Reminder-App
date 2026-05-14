@@ -27,7 +27,6 @@ public class UI {
 
         JButton addBtn = new JButton("Add Reminder");
         JButton editBtn = new JButton("Edit Reminder");
-        JButton notifyBtn = new JButton("Notify");
 
         addBtn.addActionListener(e -> showReminderEditor(null));
 
@@ -45,26 +44,10 @@ public class UI {
             showReminderEditor(reminder);
         });
 
-        notifyBtn.addActionListener(e -> {
-
-            int index = reminderList.getSelectedIndex();
-
-            if (index == -1) {
-                JOptionPane.showMessageDialog(frame, "Select a reminder first!");
-                return;
-            }
-
-            ActivityReminder reminder = user.viewUpcoming().get(index);
-
-            NotificationSystem notif = new NotificationSystem();
-            notif.sendNotif(reminder);
-        });
-
         JPanel buttonPanel = new JPanel();
 
         buttonPanel.add(addBtn);
         buttonPanel.add(editBtn);
-        buttonPanel.add(notifyBtn);
 
         frame.add(new JScrollPane(reminderList), BorderLayout.CENTER);
         frame.add(buttonPanel, BorderLayout.SOUTH);
@@ -116,6 +99,11 @@ public class UI {
 
                 user.setReminder(newReminder);
 
+                NotificationSystem notif = new NotificationSystem();
+                notif.scheduleNotif(newReminder);
+
+                JOptionPane.showMessageDialog(frame, "Reminder set successfully!");
+
             } else {
 
                 reminder.editDetails(
@@ -124,6 +112,11 @@ public class UI {
                         descField.getText(),
                         dateField.getText(),
                         timeField.getText());
+
+                NotificationSystem notif = new NotificationSystem();
+                notif.scheduleNotif(reminder);
+
+                JOptionPane.showMessageDialog(frame, "Reminder updated successfully!");
             }
 
             refreshList();
